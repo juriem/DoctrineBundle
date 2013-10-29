@@ -1,4 +1,4 @@
-DoctrineBundle
+Doctrine Discriminator Helper
 ==============
 
 Extending discriminator map with annotation and discriminator map helper
