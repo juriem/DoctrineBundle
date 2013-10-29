@@ -36,14 +36,18 @@ php composer.phar update
 
     For example, configuration for next base class
 
-    # app/config/config.yml
+``` yaml
+# app/config/config.yml
 
-    ...
+...
 
-    gizlab_doctrine:
-        discriminator_listener:
-            classes: [Acme\Bundle\DemoBundle\Entity\BaseEntity ]
+gizlab_doctrine:
+    discriminator_listener:
+        classes: [Acme\Bundle\DemoBundle\Entity\BaseEntity ]
+```
 
+
+``` php
     // src\Acme\Bundle\DemoBundle\Entity\BaseEntity.php
 
     namespace Acme/Bundle/DemoBundle/Entity
@@ -61,9 +65,9 @@ php composer.phar update
     {
         ... add fields for your entity ...
     }
+```
 
-
-
+``` php
     // src\Acme\Bundle\DemoBundle\Entity\SomeEntity.php
 
     namespace Acme/Bundle/DemoBundle/Entity
@@ -77,8 +81,9 @@ php composer.phar update
      */
     class SomeEntity extends BaseEntity
     {}
+```
 
-
+``` php
     // src\Acme\Bundle\DemoBundle\Entity\OtherEntity.php
 
     namespace Acme/Bundle/DemoBundle/Entity
@@ -92,9 +97,9 @@ php composer.phar update
      */
     class OtherEntity extends BaseEntity
     {}
+```
 
-
-and others too ...         
+and others too ...
 
 5. How to use DiscriminatorMapHelper service
 
