@@ -1,0 +1,18 @@
+parameters:
+#    gizlab_doctrine.example.class: Gizlab\Bundle\DoctrineBundle\Example
+    gizlab_doctrine.discriminator_listener.classes: []
+services:
+#    gizlab_doctrine.example:
+#        class: %gizlab_doctrine.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  gizlab.doctrine.discriminator_map_helper:
+    class: Gizlab\Bundle\DoctrineBundle\Service\DiscriminatorMapHelper
+    arguments: [ @doctrine.orm.entity_manager, %gizlab_doctrine.discriminator_listener.classes% ]
+
+
+  gizlab.doctrine.discriminator_listener:
+    class: Gizlab\Bundle\DoctrineBundle\Doctrine\Listener\DiscriminatorListener
+    arguments: [%gizlab_doctrine.discriminator_listener.classes%]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default}
