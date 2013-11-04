@@ -11,12 +11,12 @@
 namespace Gizlab\Bundle\DoctrineBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Class EntityBaseClass
  * @package Gizlab\Bundle\DoctrineBundle\Entity
  *
- * @ORM\Entity
  * @ORM\MappedSuperclass
  */
 abstract class EntityBaseClass
@@ -32,23 +32,24 @@ abstract class EntityBaseClass
 
     /**
      * @ORM\Column(type="datetime", name="_created_at")
+     * @Gedmo\Timestampable(on="create")
      * @var \DateTime
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", name="_updated_at")
+     * @Gedmo\Timestampable(on="update")
      * @var \DateTime
      */
     private $updatedAt;
 
-    final function getId()
+    final public function getId()
     {
         return $this->getId();
     }
 
-
-    final function getCreatedAt()
+    final public function getCreatedAt()
     {
         return $this->createdAt;
     }
