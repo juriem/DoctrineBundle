@@ -37,7 +37,7 @@ class Column
      *
      * @param array $data
      */
-    public function __constructor(array $data = array())
+    public function __construct(array $data = array())
     {
         foreach($data as $key=>$value){
             if ($key == 'value'){
