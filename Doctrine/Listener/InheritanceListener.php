@@ -28,7 +28,7 @@ class InheritanceListener implements EventSubscriber
 
     const INHERITANCE_ANNOTATION = '\Gizlab\Bundle\DoctrineBundle\Annotation\Inheritance';
 
-    const ENTRY_ANNOTATION = '\Gizlab\Bundle\DoctrineBundle\Annotation\InheritanceEntry';
+    const ENTRY_ANNOTATION = '\Gizlab\Bundle\DoctrineBundle\Annotation\Entry';
 
     /**
      * (non-PHPdoc)
@@ -50,14 +50,8 @@ class InheritanceListener implements EventSubscriber
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $event)
     {
-        try {
-            $class = $event->getClassMetadata()->name;
-        } catch(\Exception $e){
 
-            printf('OK\n');
-            die;
-        }
-
+         $class = $event->getClassMetadata()->name;
 
 
         /*
@@ -65,7 +59,7 @@ class InheritanceListener implements EventSubscriber
          */
         $reader = new AnnotationReader();
         $classReflection = new \ReflectionClass($class);
-        $inheritanceAnnotation = $reader->getClassAnnotation($classReflection, 'Gizlab\Bundle\DoctrineBundle\Annotation\Inheritance');
+        $inheritanceAnnotation = $reader->getClassAnnotation($classReflection, self::INHERITANCE_ANNOTATION);
 
 
 
@@ -92,7 +86,7 @@ class InheritanceListener implements EventSubscriber
                  * Checking InheritanceEntry Annotation
                  */
                 /* @var $inheritanceAnnotationEntry \Gizlab\Bundle\DoctrineBundle\Annotation\InheritanceEntry */
-                $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, 'Gizlab\Bundle\DoctrineBundle\Annotation\InheritanceEntry');
+                $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, self::ENTRY_ANNOTATION);
                 if ($inheritanceAnnotationEntry == null){
                     throw new ORMException(sprintf('Please specify InheritanceEntry for class %s or make it abstract.', $class));
                 }
@@ -111,8 +105,7 @@ class InheritanceListener implements EventSubscriber
 
                 $classReflection = new \ReflectionClass($_class);
 
-                if ($classReflection->getParentClass() && $classReflection->getParentClass()->name == $class){
-
+                if ($classReflection->getParentClass() && $this->checkFamily($classReflection, $class)){
 
 
                     /*
@@ -143,7 +136,7 @@ class InheritanceListener implements EventSubscriber
 
             $event->getClassMetadata()->setInheritanceType($inheritanceAnnotation->getType());
 
-            $event->getClassMetadata()->setDiscriminatorColumn(array('name'=>'reference_type', 'type'=>'string', 'length'=>255));
+            $event->getClassMetadata()->setDiscriminatorColumn($inheritanceAnnotation->getDiscriminatorColumn()->getArray());
         }
     }
 

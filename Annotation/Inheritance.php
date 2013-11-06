@@ -33,7 +33,7 @@ class Inheritance
     private $type;
 
     /**
-     * @var InheritanceDiscriminatorColumn
+     * @var Column
      */
     private $discriminatorColumn;
 
@@ -42,7 +42,9 @@ class Inheritance
      */
     private $discriminatorValuePrefix = '';
 
-
+    /**
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         foreach($data as $key => $value){
@@ -55,8 +57,8 @@ class Inheritance
 
                 $this->type = $value;
             } elseif ($key == 'column'){
-                if (!$value instanceof InheritanceDiscriminatorColumn){
-                    throw new AnnotationException(sprintf('Wrong type of value for column argument. Must be Gizlab\Bundle\DoctrineBundle\Annotation\InheritanceDiscriminatorColumn annotation'));
+                if (!$value instanceof Column){
+                    throw new AnnotationException(sprintf('Wrong type of value for column argument. Must be Gizlab\Bundle\DoctrineBundle\Annotation\Column annotation'));
                 }
                 $this->discriminatorColumn = $value;
             } elseif ($key == 'prefix'){
@@ -77,7 +79,7 @@ class Inheritance
     }
 
     /**
-     * @return DiscriminatorColumn|InheritanceDiscriminatorColumn
+     * @return Column
      */
     final public function getDiscriminatorColumn()
     {

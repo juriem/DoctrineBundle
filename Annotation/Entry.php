@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\AnnotationException;
  *
  * @Annotation
  */
-class InheritanceEntry
+class Entry
 {
     private $name;
 
