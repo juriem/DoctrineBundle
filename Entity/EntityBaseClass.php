@@ -44,6 +44,11 @@ abstract class EntityBaseClass
      */
     private $updatedAt;
 
+    /*
+     * Getters and setters
+     */
+
+
     final public function getId()
     {
         return $this->getId();

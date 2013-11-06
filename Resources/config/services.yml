@@ -10,9 +10,13 @@ services:
     class: Gizlab\Bundle\DoctrineBundle\Service\DiscriminatorMapHelper
     arguments: [ @doctrine.orm.entity_manager, %gizlab_doctrine.discriminator_listener.classes% ]
 
-
   gizlab.doctrine.discriminator_listener:
     class: Gizlab\Bundle\DoctrineBundle\Doctrine\Listener\DiscriminatorListener
-    arguments: [%gizlab_doctrine.discriminator_listener.classes%]
+    arguments: [%gizlab_doctrine.discriminator_listener.classes%, @annotation_reader]
     tags:
       - { name: doctrine.event_subscriber, connection: default}
+
+  gizlab_doctrine.inheritance_listener:
+    class: Gizlab\Bundle\DoctrineBundle\Doctrine\Listener\InheritanceListener
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }

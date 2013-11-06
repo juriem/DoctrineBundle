@@ -66,6 +66,9 @@ class DiscriminatorListener implements EventSubscriber
 
         $class = $event->getClassMetadata()->name;
 
+        /*
+         * Checking if not Inheritance
+         */
 
         if (count($event->getClassMetadata()->discriminatorMap) !== 0
             &&  ($this->checkParent($event->getClassMetadata()->parentClasses)

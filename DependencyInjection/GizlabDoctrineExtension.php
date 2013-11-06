@@ -22,6 +22,8 @@ class GizlabDoctrineExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+
+
         /*
          * Normalize array('class'=><value>, 'class'=><value>, ... )
          * to

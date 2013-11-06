@@ -30,7 +30,6 @@ class DiscriminatorMapEntry
         }
     }
 
-
     public function getDiscriminatorColumn()
     {
         return $this->discriminatorColumn;
