@@ -53,6 +53,6 @@ class Column
 
     public function getArray()
     {
-        array('name' => $this->name, 'fieldName'=>$this->name, 'type'=>$this->type, 'length'=>$this->length);
+        return array('name' => $this->name, 'fieldName'=>$this->name, 'type'=>$this->type, 'length'=>$this->length);
     }
 }
