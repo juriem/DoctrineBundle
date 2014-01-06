@@ -51,7 +51,7 @@ abstract class EntityBaseClass
 
     final public function getId()
     {
-        return $this->getId();
+        return $this->id;
     }
 
     final public function getCreatedAt()
