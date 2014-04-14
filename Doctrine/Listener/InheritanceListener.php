@@ -136,7 +136,7 @@ class InheritanceListener implements EventSubscriber
                         /*
                          * Add to discriminator map
                          */
-                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$_prefix . '.' . $name, $_class);
+                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$_prefix, $_class);
 
                     } else {
                         if ($inheritanceAnnotation->getType() == 'PROXY') {
