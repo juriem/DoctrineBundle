@@ -36,7 +36,7 @@ class InheritanceListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array( Events::loadClassMetadata );
+        return array(Events::loadClassMetadata);
     }
 
     public function getName()
@@ -51,7 +51,8 @@ class InheritanceListener implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $event)
     {
 
-         $class = $event->getClassMetadata()->name;
+        $class = $event->getClassMetadata()->name;
+
 
 
         /*
@@ -62,31 +63,32 @@ class InheritanceListener implements EventSubscriber
         $inheritanceAnnotation = $reader->getClassAnnotation($classReflection, self::INHERITANCE_ANNOTATION);
 
 
-
-        if ($inheritanceAnnotation !== null){
+        if ($inheritanceAnnotation !== null) {
             /* @var $inheritanceAnnotation \Gizlab\Bundle\DoctrineBundle\Annotation\Inheritance */
 
             /*
              * Processing prefix
              */
             $prefix = $inheritanceAnnotation->getDiscriminatorValuePrefix();
-            if ($prefix == ''){
+            if ($prefix == '') {
                 /*
                  * Generate prefix based on class name
                  */
-                $prefix =  $this->generateNameFromClass($class);
+                $prefix = $this->generateNameFromClass($class);
             }
 
 
             /*
              * Processing annotation
              */
-            if (!$classReflection->isAbstract()){
+            if (!$classReflection->isAbstract()) {
+
+
 
                 /*
                  * Checking Inheritance type
                  */
-                if ($inheritanceAnnotation->getType() == 'PROXY'){
+                if ($inheritanceAnnotation->getType() == 'PROXY') {
                     throw new ORMException(sprintf('Class <%s> with type of inheritance "PROXY" must be an abstract!', $class));
                 }
 
@@ -97,35 +99,38 @@ class InheritanceListener implements EventSubscriber
                 $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, self::ENTRY_ANNOTATION);
 
 
-
-                if ($inheritanceAnnotationEntry == null){
+                if ($inheritanceAnnotationEntry == null) {
                     throw new ORMException(sprintf('Please specify InheritanceEntry for class %s or make it abstract.', $class));
                 }
 
-                $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$inheritanceAnnotationEntry->getName(), $class);
+                $event->getClassMetadata()->addDiscriminatorMapClass($prefix . '.' . $inheritanceAnnotationEntry->getName(), $class);
 
+            } else {
+                if ($inheritanceAnnotation->getType() == 'PROXY') {
+                    // Skip processing PROXY inheritance
+                    return;
+                }
             }
 
             /*
              * Processing children
              */
             $driver = $event->getEntityManager()->getConfiguration()->getMetadataDriverImpl();
-            foreach($driver->getAllClassNames() as $_class){
-
+            foreach ($driver->getAllClassNames() as $_class) {
 
 
                 $classReflection = new \ReflectionClass($_class);
 
-                if ($classReflection->getParentClass() && $this->checkFamily($classReflection, $class)){
+                if ($classReflection->getParentClass() && $this->checkFamily($classReflection, $class)) {
 
 
                     /*
                      * Checking annotation
                      */
-                    if (!$classReflection->isAbstract()){
+                    if (!$classReflection->isAbstract()) {
                         $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, self::ENTRY_ANNOTATION);
 
-                        if ($inheritanceAnnotationEntry !== null){
+                        if ($inheritanceAnnotationEntry !== null) {
                             $name = $inheritanceAnnotationEntry->getName();
                         } else {
                             throw new ORMException(sprintf('Please specify @Entry annotation for class <%s>', $_class));
@@ -136,13 +141,8 @@ class InheritanceListener implements EventSubscriber
                         /*
                          * Add to discriminator map
                          */
-                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$_prefix, $_class);
+                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix . '.' . $_prefix, $_class);
 
-                    } else {
-                        if ($inheritanceAnnotation->getType() == 'PROXY') {
-                            // Skip processing PROXY inheritance
-                            return;
-                        }
                     }
 
                 }
@@ -155,6 +155,7 @@ class InheritanceListener implements EventSubscriber
             $event->getClassMetadata()->setInheritanceType($inheritanceAnnotation->getType());
 
             $event->getClassMetadata()->setDiscriminatorColumn($inheritanceAnnotation->getDiscriminatorColumn()->getArray());
+
         }
     }
 
@@ -167,7 +168,7 @@ class InheritanceListener implements EventSubscriber
     {
 
         preg_match('/(.*)\\\(.*)$/i', $class, $matches);
-        $name =  ContainerBuilder::underscore($matches[2]);
+        $name = ContainerBuilder::underscore($matches[2]);
 
         return $name;
     }
@@ -177,10 +178,11 @@ class InheritanceListener implements EventSubscriber
      * @param $parentClass
      * @return bool
      */
-    private function checkFamily(\ReflectionClass $class, $parentClass){
+    private function checkFamily(\ReflectionClass $class, $parentClass)
+    {
 
-        if ($class->getParentClass() ){
-            if ($class->getParentClass()->name == $parentClass){
+        if ($class->getParentClass()) {
+            if ($class->getParentClass()->name == $parentClass) {
                 return true;
             } else {
                 return $this->checkFamily($class->getParentClass(), $parentClass);
@@ -204,25 +206,24 @@ class InheritanceListener implements EventSubscriber
         $reader = new AnnotationReader();
 
         $entryAnnotation = $reader->getClassAnnotation($class, self::ENTRY_ANNOTATION);
-        if ($entryAnnotation !== null){
+        if ($entryAnnotation !== null) {
             $prefix = $entryAnnotation->getName();
         }
 
         $inheritanceAnnotation = $reader->getClassAnnotation($class, self::INHERITANCE_ANNOTATION);
-        if ($inheritanceAnnotation !== null && $inheritanceAnnotation->getType() == 'PROXY'){
+        if ($inheritanceAnnotation !== null && $inheritanceAnnotation->getType() == 'PROXY') {
             $prefix = $inheritanceAnnotation->getDiscriminatorValuePrefix();
         }
 
-        if ($class->getParentClass()){
-            if ($class->getParentClass()->name !== $parentClass){
+        if ($class->getParentClass()) {
+            if ($class->getParentClass()->name !== $parentClass) {
 
                 $_prefix = $this->getClassPrefix($class->getParentClass(), $parentClass);
-                if ($_prefix !== ''){
+                if ($_prefix !== '') {
                     $prefix = $_prefix . '.' . $prefix;
                 }
             }
         }
-
 
 
         return $prefix;
