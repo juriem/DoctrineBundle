@@ -82,11 +82,22 @@ class InheritanceListener implements EventSubscriber
              * Processing annotation
              */
             if (!$classReflection->isAbstract()){
+
+                /*
+                 * Checking Inheritance type
+                 */
+                if ($inheritanceAnnotation->getType() == 'PROXY'){
+                    throw new ORMException(sprintf('Class <%s> with type of inheritance "PROXY" must be an abstract!', $class));
+                }
+
                 /*
                  * Checking InheritanceEntry Annotation
                  */
                 /* @var $inheritanceAnnotationEntry \Gizlab\Bundle\DoctrineBundle\Annotation\InheritanceEntry */
                 $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, self::ENTRY_ANNOTATION);
+
+
+
                 if ($inheritanceAnnotationEntry == null){
                     throw new ORMException(sprintf('Please specify InheritanceEntry for class %s or make it abstract.', $class));
                 }
@@ -113,18 +124,25 @@ class InheritanceListener implements EventSubscriber
                      */
                     if (!$classReflection->isAbstract()){
                         $inheritanceAnnotationEntry = $reader->getClassAnnotation($classReflection, self::ENTRY_ANNOTATION);
+
                         if ($inheritanceAnnotationEntry !== null){
                             $name = $inheritanceAnnotationEntry->getName();
                         } else {
-
-                            $name = $this->generateNameFromClass($_class);
+                            throw new ORMException(sprintf('Please specify @Entry annotation for class <%s>', $_class));
                         }
+
+                        $_prefix = $this->getClassPrefix($classReflection, $class);
 
                         /*
                          * Add to discriminator map
                          */
-                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$name, $_class);
+                        $event->getClassMetadata()->addDiscriminatorMapClass($prefix.'.'.$_prefix . '.' . $name, $_class);
 
+                    } else {
+                        if ($inheritanceAnnotation->getType() == 'PROXY') {
+                            // Skip processing PROXY inheritance
+                            return;
+                        }
                     }
 
                 }
@@ -170,6 +188,44 @@ class InheritanceListener implements EventSubscriber
         }
 
         return false;
+
+    }
+
+
+    /**
+     * @param \ReflectionClass $class
+     * @param $parentClass
+     */
+    private function getClassPrefix(\ReflectionClass $class, $parentClass)
+    {
+
+
+        $prefix = '';
+        $reader = new AnnotationReader();
+
+        $entryAnnotation = $reader->getClassAnnotation($class, self::ENTRY_ANNOTATION);
+        if ($entryAnnotation !== null){
+            $prefix = $entryAnnotation->getName();
+        }
+
+        $inheritanceAnnotation = $reader->getClassAnnotation($class, self::INHERITANCE_ANNOTATION);
+        if ($inheritanceAnnotation !== null && $inheritanceAnnotation->getType() == 'PROXY'){
+            $prefix = $inheritanceAnnotation->getDiscriminatorValuePrefix();
+        }
+
+        if ($class->getParentClass()){
+            if ($class->getParentClass()->name !== $parentClass){
+
+                $_prefix = $this->getClassPrefix($class->getParentClass(), $parentClass);
+                if ($_prefix !== ''){
+                    $prefix = $_prefix . '.' . $prefix;
+                }
+            }
+        }
+
+
+
+        return $prefix;
 
     }
 }

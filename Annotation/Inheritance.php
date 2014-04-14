@@ -24,7 +24,7 @@ class Inheritance
      *
      * @var array
      */
-    private $typeHash = array('SINGLE_TABLE' => ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE, 'JOINED'=> ClassMetadata::INHERITANCE_TYPE_JOINED);
+    private $typeHash = array('SINGLE_TABLE' => ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE, 'JOINED'=> ClassMetadata::INHERITANCE_TYPE_JOINED, 'PROXY' => 'PROXY');
 
     /**
      * Type
